@@ -14,6 +14,7 @@
 - [stats.md](stats.md) — просмотры и лайки всех разобранных рилсов.
 - [checklist.md](checklist.md) — универсальный чек-лист рилса для любой ниши.
 - [sounds.md](sounds.md) — словарь звуков: какой звук, куда ставить, где взять.
+- [scripts/sfx.py](scripts/sfx.py) — своя библиотека звуков: пришли рилсы или файлы со звуками, которые нравятся, и Claude вырежет их без голоса, назовёт по задаче («тревожные часы», «свуш для склейки») и разложит по папкам. При монтаже звуки берутся оттуда. Лежит вне навыка (по умолчанию `~/reels-sfx`).
 - [resources.md](resources.md) — сервисы для мемов, фраз из фильмов и стоков.
 - [pipeline/](pipeline) — техника: чистый стартовый проект, скрипты, [стандарт файла](pipeline/references/delivery-standard.md), [журнал ошибок](pipeline/references/incidents.md).
 - [niches/](niches) — советы по нишам: чем доказывать, какие форматы, ограничения.
@@ -34,7 +35,7 @@ git clone https://github.com/nicolemartynova/reelsology ~/.claude/skills/reelsol
 
 Для разборов и сценариев этого достаточно. Для монтажа напишите в Claude Code «настрой рилсологию»: агент создаст проект, проверит, что установлено, предложит поставить недостающее и расспросит о стиле. Варианты он покажет готовыми кадрами.
 
-Нужно: python3 + Pillow, Node 18+, ffmpeg 7+, yt-dlp, whisper.cpp с моделью `ggml-large-v3-turbo` (или ключ ElevenLabs), для вырезки человека `rembg[cpu]`.
+Нужно: python3 + Pillow + numpy, Node 18+, ffmpeg 7+, yt-dlp, whisper.cpp с моделью `ggml-large-v3-turbo` (или ключ ElevenLabs), для вырезки человека `rembg[cpu]`.
 
 Для сценариев: навык `humanizer-ru` в `~/.claude/skills/humanizer-ru/` — им вычитывается каждый написанный сценарий перед ответом.
 

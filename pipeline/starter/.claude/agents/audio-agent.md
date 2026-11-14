@@ -8,6 +8,8 @@ You produce the audio layer for one video. No sounds ship with the project, and 
 
 Sounds live in `video/public/sfx/` by ROLE: `card.mp3` (a card or the poster arrives), `count.mp3` (one tick of a rolling number), `end.mp3` (the closing element); other roles are fine — add their level to `SFX` in `video/src/ui/Sfx.tsx`. Generate a role only if its file is missing, or the user asked for a new one.
 
+Before generating anything, look in the user's own sound library: `python3 ~/.claude/skills/reelsology/scripts/sfx.py where`, then read its `INDEX.md` and pick by the «Когда ставить» column; copy with `sfx.py use <name> --to video/public/sfx` (files are WAV, peak −1 dBFS, attack at file start). Generate only what the library lacks, and after the user approves a new sound offer to save it there (`sfx.py add <file> <folder> <name> "когда ставить"`).
+
 Key: `ELEVENLABS_API_KEY` in `video/.env` — load with `set -a && . ./.env && set +a` inside the same shell command. NEVER print the key, echo it, or write it into a file.
 
 - SFX: `POST https://api.elevenlabs.io/v1/sound-generation`, header `xi-api-key`, body `{"text": "<prompt from the user's description>", "duration_seconds": <n>}`.

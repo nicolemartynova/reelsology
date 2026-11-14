@@ -39,6 +39,20 @@
 ## Как подобрать звук, не слыша его
 Три кандидата CC0 на роль, отбор замерами: атака, пик, длина тела, шумовой пол, яркость. Подрезать тишину до атаки и ставить пиком на кадр раньше события (З-09). Потом проверить Earshot: `sfx check` на дефекты, `match` на роль, `rank` при weak или no match, банк `earshot sfx render` как запасной вариант (З-09).
 
+## Расстановка и сведение: навык real-sfx
+Навык `real-sfx` (`~/.claude/skills/real-sfx`, источник github.com/Clipwing/skills, тот самый «Real SFX» из разбора `2026-11-11-Dff0z92MBWR`) ставит звуки из библиотеки пользователя ровно на кадр, сводит их с голосом и сам проверяет результат замерами. Его библиотеки записаны в `~/.claude/skills/real-sfx/config.json`: основная `~/reels-sfx` (tier main), запасная `takes/sfxlib/lib` проекта Below Market (tier extra). После `sfx.py add` пересобрать его индекс: `python3 ~/.claude/skills/real-sfx/scripts/build_index.py`.
+
+Порядок для ролика на Remotion (проверен на Below Market 13, 2026-11-14):
+1. Рабочая папка отдельно от проекта монтажа, например `reels-N/realsfx/`. На вход идёт ролик без эффектов: голос и графика.
+2. `work/events.json`: события из кадров композиции, секунды = кадр / 30. Типы свои: `[{"t":13.87,"type":"plus"},{"t":4.3,"type":"para","g":0.5}]`. `g` — громкость относительно роли (свушам поверх речи 0.35–0.5).
+3. `work/map.json`: тип → звук библиотеки по `id` из `library_index.json`, звук выбирать по `INDEX.md`: `{"plus":{"ids":[12],"role":"chime"}}`. 2–3 семейства на ролик (главное правило выше).
+4. `python3 -I scripts/from_cues.py work/events.json --video IN.mp4 --out work/cues.json --map work/map.json --ui library`
+5. `python3 -I scripts/mix.py work/cues.json --out result/X.mp4 --voice-safe` (сначала с `--plan`). На выходе новый MP4 и отдельная дорожка эффектов `X_sfx_track.wav`.
+6. `python3 -I scripts/critique.py result/X_resolved_cues.json result/X_sfx_track.wav`. Исправлять оси `speech` и `balance`: эффект не громче голоса. Замечания `variety` и `pacing` о повторе одного звука на одно событие не исправлять: повтор задуман (З-05).
+7. Черновик 540p на прослушку. Моменты, которые назвал `critique`, послушать отдельно: навык меряет, но не слышит.
+
+Скрипты запускаются из `~/.claude/skills/real-sfx/`. Для листов кадров (`look.py`) и смены высоты нужен ffmpeg с `drawtext` и `rubberband` (`brew install ffmpeg-full`); для расстановки по списку событий не нужен.
+
 ## Громкость (по функциям базы)
 - Музыка под речью: 2–3 % (З-03).
 - Тихий звук на каждое наложение: около 10 % (З-01).
@@ -65,5 +79,5 @@
 - `2026-11-04-DfArwy7Be08`, `2026-11-04-DezVxCzoSZO` — пары «звук + анимация текста».
 - `2026-11-04-Dc4Dt4Wobtf` — movie impact, fast forward, abacus, UI sound, bass whoosh, heartbeat.
 - `2026-11-04-Dc6AmDWurAk` — a few moments later, boxing bell, crickets, downer noise, shocking, taco bell bong.
-- `2026-11-11-Dff0z92MBWR` — Openverse, Earshot, расстановка звука по кадрам (З-09).
+- `2026-11-11-Dff0z92MBWR` — Openverse, Earshot, расстановка звука по кадрам: навык real-sfx (З-09).
 - `2026-11-04-DfIZ_07oP2S` — тот же текст, что DepOikFoyew, снятый заново в костюме.
